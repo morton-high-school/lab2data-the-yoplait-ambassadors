@@ -23,7 +23,7 @@ public class LinearRegression
 
     public setSlope()
     {
-        n = data.size();
+       n = data.size();
 
         for(int a = 0; a < data.size(); a++){
           xSum += data[a].carbonEmissions;
@@ -34,7 +34,6 @@ public class LinearRegression
         }
 
         for(int c = 0; c < data.size(); c++){
-          xySum += ((data[c].carbonEmissions)*(data[c].averageTemp));
         }
 
         for(int d = 0; d < data.size(); d++){
