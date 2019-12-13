@@ -12,9 +12,9 @@ import java.util.Scanner;
 
 public class DataManager
 {
-    public final String COMPILED_DATA_FILE_NAME = "compiled-data.csv";
-    public final String TEMPERATURE_DATA_FILE_NAME = "temperature-data.csv";
-    public final String CARBON_DATA_FILE_NAME = "carbon-data.csv";
+    public final String COMPILED_DATA_FILE_NAME = "./data/compiled-data.csv";
+    public final String TEMPERATURE_DATA_FILE_NAME = "./data/temperature-data.csv";
+    public final String CARBON_DATA_FILE_NAME = "./data/carbon-data.csv";
 
     HashMap<Integer, YearData> data;
 
@@ -71,13 +71,11 @@ public class DataManager
 
     public void downloadData() throws IOException
     {
-        //First file.
-
         File directory = new File("data");
         directory.mkdir(); //Does nothing if already exists.
 
-        File temperatureFile = new File("data/" + TEMPERATURE_DATA_FILE_NAME);
-        File carbonFile = new File("data/" + CARBON_DATA_FILE_NAME);
+        File temperatureFile = new File(TEMPERATURE_DATA_FILE_NAME);
+        File carbonFile = new File(CARBON_DATA_FILE_NAME);
 
         if (!temperatureFile.exists())
         {
@@ -92,7 +90,20 @@ public class DataManager
 
     public void compileData()
     {
+        //TODO Need to load data from two separate files.
+        FileWriter fileWriter = new FileWriter(COMPILED_DATA_FILE_NAME);
+        PrintWriter printWriter = new PrintWriter(fileWriter);
 
+        for (i = 0; i < data.size(); i++)
+        {
+            YearData year = data.get(i);
+            double temp = year.averageTemp;
+            double carbon = year.carbonEmissions;
+
+            printWriter.println(year + "," + temp + "," + carbon);
+        }
+
+        printWriter.close();
     }
 
     public void downloadFile(File file, URL url) throws IOException
