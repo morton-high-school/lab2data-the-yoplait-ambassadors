@@ -9,6 +9,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.io.PrintWriter;
+import java.io.FileWriter;
 
 public class DataManager
 {
@@ -19,7 +21,7 @@ public class DataManager
     public final int FIRST_YEAR_TEMP = 1750;
     public final int LAST_YEAR_TEMP = 2015;
     public final int FIRST_YEAR_CARBON = 0;
-    public final int LAST_YEAR_CARBON = 2014; //TODO
+    public final int LAST_YEAR_CARBON = 2014;
 
     HashMap<Integer, YearData> data;
 
@@ -42,7 +44,7 @@ public class DataManager
         }
     }
 
-    public void loadExistingData() throws FileNotFoundException
+    public void loadExistingData() throws IOException
     {
         if (!new File(COMPILED_DATA_FILE_NAME).exists())
         {
@@ -84,7 +86,7 @@ public class DataManager
         if (!temperatureFile.exists())
         {
             //TODO Change
-            downloadFile(temperatureFile, new URL(""));
+            downloadFile(temperatureFile, new URL("https://drive.google.com/uc?export=download&id=1xetpfmR-l6A0OWy_HCREU_YK2seLf9nv"));
         }
         if (!carbonFile.exists())
         {
@@ -92,7 +94,7 @@ public class DataManager
         }
     }
 
-    public void compileData()
+    public void compileData() throws IOException
     {
         //TODO Need to load data from two separate files.
         FileWriter fileWriter = new FileWriter(COMPILED_DATA_FILE_NAME);
@@ -106,6 +108,7 @@ public class DataManager
         Scanner tempScanner = new Scanner(new File(TEMPERATURE_DATA_FILE_NAME));
 
         //Store all of our data in tempTotal and tempEntriesNum
+        tempScanner.nextLine(); //Skip a line.
         while (tempScanner.hasNextLine())
         {
             String s = tempScanner.nextLine();
@@ -113,9 +116,16 @@ public class DataManager
             String[] dateParts = tempParts[0].split("-");
             int year = Integer.parseInt(dateParts[0]);
 
-            if (tempParts[1].equals("")) //If there is no data for the specified time period
+            try
             {
-                break;
+                if (tempParts[1].equals("")) //If there is no data for the specified time period
+                {
+                    continue;
+                }
+            }
+            catch (ArrayIndexOutOfBoundsException e)
+            {
+                continue;
             }
 
             if (!tempTotal.containsKey(year))
@@ -134,7 +144,7 @@ public class DataManager
 
         HashMap<Integer, Double> tempAverages = new HashMap();
 
-        for (int yearNum : tempTotal.entrySet())
+        for (int yearNum : tempTotal.keySet())
         {
             double average = tempTotal.get(yearNum) / tempEntriesNumber.get(yearNum);
             tempAverages.put(yearNum, average);
@@ -142,21 +152,31 @@ public class DataManager
 
         //END OF TEMPERATURE DATA PARSING
 
-        Scanner carbonScanner = new Scanner(new File(CARBON_DATA_FILE_NAME));
 
+
+        Scanner carbonScanner = new Scanner(new File(CARBON_DATA_FILE_NAME));
+        carbonScanner.nextLine();
         while (carbonScanner.hasNext())
         {
             String s = carbonScanner.nextLine();
-            
+            String[] carbonParts = s.split(",");
+            int year = Integer.parseInt(carbonParts[0]);
+
+            if (year < FIRST_YEAR_TEMP || year > LAST_YEAR_CARBON)
+            {
+                continue;
+            }
+
+            data.put(year, new YearData(year, tempAverages.get(year), Double.parseDouble(carbonParts[1])));
         }
 
-        for (i = 0; i < data.size(); i++)
+        for (int i = FIRST_YEAR_TEMP; i <= LAST_YEAR_CARBON; i++)
         {
             YearData year = data.get(i);
             double temp = year.averageTemp;
             double carbon = year.carbonEmissions;
 
-            printWriter.println(year + "," + temp + "," + carbon);
+            printWriter.println(year.year + "," + temp + "," + carbon);
         }
 
         printWriter.close();
