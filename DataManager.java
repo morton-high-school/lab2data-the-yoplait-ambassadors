@@ -16,6 +16,11 @@ public class DataManager
     public final String TEMPERATURE_DATA_FILE_NAME = "./data/temperature-data.csv";
     public final String CARBON_DATA_FILE_NAME = "./data/carbon-data.csv";
 
+    public final int FIRST_YEAR_TEMP = 1750;
+    public final int LAST_YEAR_TEMP = 2015;
+    public final int FIRST_YEAR_CARBON = 0;
+    public final int LAST_YEAR_CARBON = 2014; //TODO
+
     HashMap<Integer, YearData> data;
 
     public DataManager(boolean load) throws IOException
@@ -33,7 +38,6 @@ public class DataManager
             {
                 downloadData();
                 compileData();
-                loadExistingData();
             }
         }
     }
@@ -93,6 +97,58 @@ public class DataManager
         //TODO Need to load data from two separate files.
         FileWriter fileWriter = new FileWriter(COMPILED_DATA_FILE_NAME);
         PrintWriter printWriter = new PrintWriter(fileWriter);
+
+
+        //TEMPERATURE DATA PARSING
+        HashMap<Integer, Double> tempTotal = new HashMap(); //The total "avg" global temp
+        HashMap<Integer, Integer> tempEntriesNumber = new HashMap(); //Number of entries for each year
+
+        Scanner tempScanner = new Scanner(new File(TEMPERATURE_DATA_FILE_NAME));
+
+        //Store all of our data in tempTotal and tempEntriesNum
+        while (tempScanner.hasNextLine())
+        {
+            String s = tempScanner.nextLine();
+            String[] tempParts = s.split(",");
+            String[] dateParts = tempParts[0].split("-");
+            int year = Integer.parseInt(dateParts[0]);
+
+            if (tempParts[1].equals("")) //If there is no data for the specified time period
+            {
+                break;
+            }
+
+            if (!tempTotal.containsKey(year))
+            {
+                tempTotal.put(year, Double.parseDouble(tempParts[1]));
+                tempEntriesNumber.put(year, 1);
+            }
+            else
+            {
+                tempTotal.replace(year, tempTotal.get(year) + Double.parseDouble(tempParts[1]));
+                tempEntriesNumber.replace(year, tempEntriesNumber.get(year) + 1);
+            }
+        }
+
+        tempScanner.close(); //Free up a bunch of memory
+
+        HashMap<Integer, Double> tempAverages = new HashMap();
+
+        for (int yearNum : tempTotal.entrySet())
+        {
+            double average = tempTotal.get(yearNum) / tempEntriesNumber.get(yearNum);
+            tempAverages.put(yearNum, average);
+        }
+
+        //END OF TEMPERATURE DATA PARSING
+
+        Scanner carbonScanner = new Scanner(new File(CARBON_DATA_FILE_NAME));
+
+        while (carbonScanner.hasNext())
+        {
+            String s = carbonScanner.nextLine();
+            
+        }
 
         for (i = 0; i < data.size(); i++)
         {
