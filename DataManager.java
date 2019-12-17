@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.io.PrintWriter;
 import java.io.FileWriter;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 public class DataManager
 {
@@ -200,5 +201,15 @@ public class DataManager
             System.out.println("ERROR: Could not download file. Is it a wifi issue?");
             e.printStackTrace();
         }
+    }
+
+    public SimpleRegression getDataRegression()
+    {
+        SimpleRegression regression = new SimpleRegression();
+        for (int i : data.keySet())
+        {
+            regression.addData(data.get(i).carbonEmissions, data.get(i).averageTemp);
+        }
+        return regression;
     }
 }
