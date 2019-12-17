@@ -1,10 +1,13 @@
 import java.io.IOException;
+import java.util.Scanner;
 
 public class ClimateExperiment
 {
     public static void main(String[] args) throws IOException
     {
         DataManager dataManager = new DataManager(true);
+
+        Runtime.getRuntime().exec("cls");
         System.out.print("Hello. We are the Yoplait Ambassadors, and we ran a climate experiment!\n" +
         "The earth is warming, and a majority of climate scientists believe this is due to rising carbon levels in the atmosphere.\n" +
         "Using data gathered from labs around the world, we created a linear regression that measures the relationship between total atmospheric carbon (in ppm) and average global temperature (celcius)\n" +
@@ -17,5 +20,7 @@ public class ClimateExperiment
         double d = scanner.nextDouble();
 
         double a = dataManager.getDataRegression().predict(d);
+
+        System.out.println("Predicted global temperature (celcius): " + a);
     }
 }
