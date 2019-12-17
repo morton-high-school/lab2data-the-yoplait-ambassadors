@@ -1,3 +1,4 @@
+import java.util.*;
 public class LinearRegression
 {
     ArrayList<YearData> data;
@@ -9,105 +10,58 @@ public class LinearRegression
 
     public double xSum = 0;
     public double ySum = 0;
-    public double xySum = 0;
-    public double x2Sum = 0;
-    public double y2Sum = 0;
+    public double xMean = 0;
+    public double yMean = 0;
+    public double sumSquares = 0;
+    public double sumProducts = 0;
     public double n = 0;
 
     public LinearRegression(ArrayList<YearData> data)
     {
         this.data = data;
-        setSlope(data);
-        setYIntercept(data);
+        setSlope();
+        setYIntercept();
     }
 
-    public setSlope()
+    public void setSlope()
     {
        n = data.size();
 
         for(int a = 0; a < data.size(); a++){
-          xSum += data[a].carbonEmissions;
+          xSum += data.get(a).carbonEmissions;
         }
+        xMean = xSum/n;
 
         for(int b = 0; b < data.size(); b++){
-          ySum += data[b].averageTemp;
+          ySum += data.get(b).averageTemp;
         }
+        yMean = ySum/n;
+
+//      System.out.println(xMean);
+//      System.out.println(yMean);
 
         for(int c = 0; c < data.size(); c++){
+          sumSquares += ((data.get(c).carbonEmissions)-xMean)*((data.get(c).carbonEmissions)-xMean);
         }
 
         for(int d = 0; d < data.size(); d++){
-          x2Sum += (data[d].carbonEmissions)*(data[d].carbonEmissions);
+          sumProducts += ((data.get(d).carbonEmissions)-xMean)*((data.get(d).averageTemp)-yMean);
         }
+//      System.out.println(sumSquares);
+//      System.out.println(sumProducts);
 
-        for(int e = 0; e < data.size(); e++){
-          y2Sum += (data[d].averageTemp)*(data[d].averageTemp);
-        }
-
-        slope = ((n*xySum)-(xSum*ySum))/((n*x2Sum)-(xSum*xSum));
+        slope = (sumProducts/sumSquares);
 
     }
 
-    public setYIntercept()
+    public void setYIntercept()
     {
-        n = data.size();
 
-        //x value will be carbon emissions
-        for(int a = 0; a < data.size(); a++){
-          xSum += data[a].carbonEmissions;
-        }
-
-        for(int b = 0; b < data.size(); b++){
-          ySum += data[b].averageTemp;
-        }
-
-        for(int c = 0; c < data.size(); c++){
-          xySum += ((data[c].carbonEmissions)*(data[c].averageTemp));
-        }
-
-        for(int d = 0; d < data.size(); d++){
-          x2Sum += (data[d].carbonEmissions)*(data[d].carbonEmissions);
-        }
-
-        for(int e = 0; e < data.size(); e++){
-          y2Sum += (data[d].averageTemp)*(data[d].averageTemp);
-        }
-
-        yIntercept = ((x2Sum*ySum)-(xSum*xySum))/((n*x2Sum)-(xSum*xSum));
+        yIntercept = yMean - (slope*xMean);
 
     }
 
-    public double findRSquaredValue()
-    {
-        n = data.size();
-
-        //x value will be carbon emissions
-        for(int a = 0; a < data.size(); a++){
-          xSum += data[a].carbonEmissions;
-        }
-
-        for(int b = 0; b < data.size(); b++){
-          ySum += data[b].averageTemp;
-        }
-
-        for(int c = 0; c < data.size(); c++){
-          xySum += ((data[c].carbonEmissions)*(data[c].averageTemp));
-        }
-
-        for(int d = 0; d < data.size(); d++){
-          x2Sum += (data[d].carbonEmissions)*(data[d].carbonEmissions);
-        }
-
-        for(int e = 0; e < data.size(); e++){
-          y2Sum += (data[d].averageTemp)*(data[d].averageTemp);
-        }
-
-        rSquaredValue = ((n*xySum)-(xSum*ySum)*(n*xySum)-(xSum*ySum))/((n*x2Sum-((xSum)*(xSum)))*(n*y2Sum-((ySum)*(ySum))));
-        return rSquaredValue;
-    }
-
-    //x axis = carbon, y axis = temp,
-    public double carbonPrediction(double userInput, ArrayList<YearData> data)
+    public double carbonPrediction(double userInput)
     {
         prediction = (slope*userInput) + yIntercept;
         return prediction;
