@@ -203,13 +203,22 @@ public class DataManager
         }
     }
 
-    public SimpleRegression getDataRegression()
+    public LinearRegression getDataRegression()
     {
-        SimpleRegression regression = new SimpleRegression();
+        ArrayList<YearData> arrayListData = new ArrayList();
+        for (int i : data.keySet())
+        {
+            arrayListData.add(data.get(i));
+        }
+        LinearRegression linearRegression = new LinearRegression(arrayListData);
+
+
+        //Old code that used apache commons math's implementation of SimpleRegression
+        /*SimpleRegression regression = new SimpleRegression();
         for (int i : data.keySet())
         {
             regression.addData(data.get(i).carbonEmissions, data.get(i).averageTemp);
-        }
-        return regression;
+        }*/
+        return linearRegression;
     }
 }
