@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +23,11 @@ public class Cereal
         //Take in all data from csv
         ArrayList<Cereal> cerealList = new ArrayList();
         Scanner scanner = new Scanner(new File("Cereal.csv"));
+        scanner.nextLine(); //Skips the first line because it has column details.
         while (scanner.hasNextLine())
         {
             String[] parts = scanner.nextLine().split(",");
-            cerealList.add(new Cereal(parts[0], Integer.parseInt(parts[11]), Double.parseDouble(parts[14]), parts[8]));
+            cerealList.add(new Cereal(parts[0], Integer.parseInt(parts[11]), Double.parseDouble(parts[14]), Integer.parseInt(parts[8])));
         }
 
         int shelf1Number = 0;
@@ -48,13 +50,27 @@ public class Cereal
                 shelf3Number++;
             }
         }
-        double shelf1Average = shelf1Rating/shelf1Number;
-        double shelf2Average = shelf2Rating/shelf2Number;
-        double shelf3Avereage = shelf3Rating/shelf3Number;
-        System.out.pritnln("Cereals on shelf 1 have an average rating of: " + shelf1Average);
-        System.out.pritnln("Cereals on shelf 2 have an average rating of: " + shelf2Average);
-        System.out.pritnln("Cereals on shelf 3 have an average rating of: " + shelf3Average);
 
+        double shelf1Average = shelf1RatingTotal/shelf1Number;
+        double shelf2Average = shelf2RatingTotal/shelf2Number;
+        double shelf3Average = shelf3RatingTotal/shelf3Number;
+
+        System.out.println("Cereals on shelf 1 have an average rating of: " + shelf1Average);
+        System.out.println("Cereals on shelf 2 have an average rating of: " + shelf2Average);
+        System.out.println("Cereals on shelf 3 have an average rating of: " + shelf3Average);
+
+        if (shelf1Average > shelf2Average && shelf1Average > shelf3Average)
+        {
+            System.out.println("Shelf 1 has the highest average rating.");
+        }
+        if (shelf2Average > shelf1Average && shelf2Average > shelf3Average)
+        {
+            System.out.println("Shelf 2 has the highest average rating.");
+        }
+        if (shelf3Average > shelf2Average && shelf3Average > shelf1Average)
+        {
+            System.out.println("Shelf 3 has the highest average rating.");
+        }
     }
 
     public String getName()

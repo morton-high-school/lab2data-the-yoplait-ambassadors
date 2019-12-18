@@ -5,6 +5,7 @@ public class ClimateExperiment
 {
     public static void main(String[] args) throws IOException, InterruptedException
     {
+        System.out.println("Downloading and parsing data. This will take a minute.");
         DataManager dataManager = new DataManager(true);
 
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();

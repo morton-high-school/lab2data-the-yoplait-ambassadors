@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.io.PrintWriter;
 import java.io.FileWriter;
-import org.apache.commons.math3.stat.regression.SimpleRegression;
+//import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 public class DataManager
 {
@@ -198,8 +198,8 @@ public class DataManager
         }
         catch (Exception e)
         {
-            System.out.println("ERROR: Could not download file. Is it a wifi issue?");
-            e.printStackTrace();
+            System.out.println("ERROR: Could not download file. Is it a wifi issue? Delete data folder to restart program.");
+            System.exit(0);
         }
     }
 
